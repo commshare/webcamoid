@@ -1,3 +1,9 @@
+# win32 version build by Qt for camera mjpeg test 
+## Windows 32+Qt5.7 build and run ok on win10 x64 with debug mode 20160811 J:\MYSELF\webcamoid
+
+
+
+
 # Webcamoid, webcam capture application #
 
 [Webcamoid](https://webcamoid.github.io/) is a full featured webcam capture application.
