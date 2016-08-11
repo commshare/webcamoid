@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
     Ak::setQmlPluginPath(qmlPluginPath);
 #else
     /* J:\media\XLIVE\windows\webcamoid\lib\qt\qml */
-    QString mypath="J:/media/XLIVE/windows/webcamoid/lib/qt/qml";
+    QString mypath="J:/MYSELF/webcamoid/lib/qt/qml";
     Ak::setQmlPluginPath(mypath);
 #endif
 
