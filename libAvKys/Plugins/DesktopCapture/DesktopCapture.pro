@@ -35,7 +35,7 @@ HEADERS += \
 INCLUDEPATH += \
     ../../Lib/src
 
-LIBS += -L../../Lib/ -l$${COMMONS_TARGET}
+LIBS += -L$$PWD/../../Lib/ -l$${COMMONS_TARGET}
 win32: LIBS += -lole32
 
 OTHER_FILES += pspec.json

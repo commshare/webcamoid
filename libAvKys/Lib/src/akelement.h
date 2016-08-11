@@ -98,7 +98,7 @@ class AkElement: public QObject
                                                const QString &elementName="");
         Q_INVOKABLE static bool recursiveSearch();
         Q_INVOKABLE static void setRecursiveSearch(bool enable);
-        Q_INVOKABLE static QStringList searchPaths(SearchPaths pathType=SearchPathsAll);
+        Q_INVOKABLE static QStringList searchPaths(SearchPaths pathType=SearchPathsAll/*调用时传入为空，那么就使用默认路径*/);
         Q_INVOKABLE static void addSearchPath(const QString &path);
         Q_INVOKABLE static void setSearchPaths(const QStringList &searchPaths);
         Q_INVOKABLE static void resetSearchPaths();

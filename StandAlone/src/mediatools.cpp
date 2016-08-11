@@ -62,6 +62,7 @@ MediaTools::MediaTools(QQmlApplicationEngine *engine, QObject *parent):
     this->m_vcamLinked = false;
 
     Ak::setQmlEngine(engine);
+    /*元素名字叫做 pipeline，Bin.dll里*/
     this->m_pipeline = AkElement::create("Bin", "pipeline");
 
     if (this->m_pipeline) {

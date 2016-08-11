@@ -1,3 +1,8 @@
+## remove dll and qml lib folder for my test on win10
+lib/
+###remove ffmpeg libs
+ffmpeglibs
+
 # Compiled source #
 ###################
 *.com

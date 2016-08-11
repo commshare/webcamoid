@@ -205,7 +205,9 @@ AkElementPtr AkElement::create(const QString &pluginId,
                                const QString &elementName)
 {
     QString filePath = AkElement::pluginPath(pluginId);
-
+    /*"filepath[J:\\media\\XLIVE\\windows\\webcamoid\\lib\\avkys\\Bin.dll] and pluginId[Bin]"
+    */
+    qDebug()<<"filepath["+filePath+"] and pluginId["+pluginId+"]";
     if (filePath.isEmpty())
         return AkElementPtr();
 
@@ -248,7 +250,9 @@ QStringList AkElement::searchPaths(SearchPaths pathType)
         return akElementGlobalStuff->m_pluginsSearchPaths;
 
 #ifdef Q_OS_WIN32
-    QString defaultPath = QString("%1/../lib/%2")
+    QString original="%1/../lib/%2";
+    QString myself="%1/lib/%2";
+    QString defaultPath = QString(myself)
                           .arg(QCoreApplication::applicationDirPath())
                           .arg(COMMONS_TARGET);
 #else

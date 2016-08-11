@@ -49,6 +49,8 @@ INCLUDEPATH += \
     ../Lib/src
 
 LIBS += -L../Lib/ -l$${COMMONS_TARGET}
+LIBS +=  -L../../../webcamoid/libAvKys/Lib -lavkys  ##added by me
+
 win32: LIBS += -lole32
 
 DISTFILES = qmldir

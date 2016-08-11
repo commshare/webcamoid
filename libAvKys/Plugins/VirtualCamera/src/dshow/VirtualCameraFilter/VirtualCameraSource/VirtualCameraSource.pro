@@ -58,13 +58,25 @@ INCLUDEPATH += \
     ../ipc/src
 
 CONFIG(debug, debug|release) {
-    LIBS += -L../BaseClasses -lstrmbasd
+  #  LIBS += -L./BaseClasses/ -lstrmbasd
+    ##why does this work?
+    #LIBS += -L J:/media/XLIVE/windows/webcamoid/libAvKys/Plugins/VirtualCamera/src/dshow/VirtualCameraFilter/BaseClasses -lstrmbasd
+    #this work:
+     LIBS +=  -L $$PWD/../BaseClasses  -lstrmbasd
 } else {
     LIBS += -L../BaseClasses -lstrmbase
 }
 
-LIBS += \
-    -L../ipc -lipc \
+# the following not works for me
+# -L../ipc -lipc \
+#     -L J:/media/XLIVE/windows/webcamoid/libAvKys/Plugins/VirtualCamera/src/dshow/VirtualCameraFilter/ipc -lipc \
+#    -L $$PWD/../ipc/ -lipc \
+
+# this works:
+#     J:/media/XLIVE/windows/webcamoid/libAvKys/Plugins/VirtualCamera/src/dshow/VirtualCameraFilter/VirtualCameraSource/libipc.a \
+# this works:
+LIBS +=   -L $$PWD/../ipc/libipc.a
+LIBS += \  
     -lstrmiids \
     -luuid \
     -lole32 \

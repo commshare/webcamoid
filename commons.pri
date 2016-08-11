@@ -16,7 +16,9 @@
 #
 # Web-Site: http://webcamoid.github.io/
 
+##应用程序名字
 COMMONS_APPNAME = "Webcamoid"
+###编译输出的程序对象
 COMMONS_TARGET = $$lower($${COMMONS_APPNAME})
 VER_MAJ = 7
 VER_MIN = 2

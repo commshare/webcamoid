@@ -155,6 +155,7 @@ Capture::Capture(): QObject()
     this->m_ioMethod = IoMethodGrabSample;
     this->m_graph = NULL;
 
+    /*使用这个*/
     QObject::connect(&this->m_frameGrabber,
                      &FrameGrabber::frameReady,
                      this,
@@ -475,16 +476,21 @@ AkCaps Capture::capsFromMediaType(const AM_MEDIA_TYPE *mediaType) const
     VIDEOINFOHEADER *videoInfoHeader =
             reinterpret_cast<VIDEOINFOHEADER *>(mediaType->pbFormat);
     QString fourcc = guidToStr->value(mediaType->subtype);
-
-    if (fourcc.isEmpty())
+    qDebug()<<"fourcc ["+fourcc+"]";
+    if (fourcc.isEmpty()){
+        qDebug()<<"fourcc is empty";
         return AkCaps();
+    }
 
     AkCaps videoCaps;
-    videoCaps.setMimeType("video/unknown");
+    videoCaps.setMimeType("video/unknown"); /*设置为unkown*/
     videoCaps.setProperty("fourcc", fourcc);
     videoCaps.setProperty("width", int(videoInfoHeader->bmiHeader.biWidth));
     videoCaps.setProperty("height", int(videoInfoHeader->bmiHeader.biHeight));
     AkFrac fps(TIME_BASE, videoInfoHeader->AvgTimePerFrame);
+    qDebug()<<"width["<<videoInfoHeader->bmiHeader.biWidth <<"and height "<<videoInfoHeader->bmiHeader.biHeight;
+    /*设置帧率*/
+    qDebug()<<"## set fps ["+fps.toString()+"]";
     videoCaps.setProperty("fps", fps.toString());
 
     return videoCaps;
@@ -1099,9 +1105,12 @@ bool Capture::init()
     }
 
     if (this->m_ioMethod != IoMethodDirectRead) {
+         qDebug()<<"NOT IoMethodDirectRead";
         int type = this->m_ioMethod == IoMethodGrabSample? 0: 1;
+        qDebug()<<"use sample callback["<<type<<"]  this should be 0";
         hr = grabberPtr->SetCallback(&this->m_frameGrabber, type);
-    }
+    }else
+        qDebug()<<"IS IoMethodDirectRead";
 
     this->m_grabber = SampleGrabberPtr(grabberPtr, this->deleteUnknown);
 
@@ -1140,7 +1149,7 @@ bool Capture::init()
         return false;
     }
 
-    // Set capture format
+    // Set capture format 设置采样的格式
     QList<int> streams = this->streams();
 
     if (streams.isEmpty()) {
@@ -1166,7 +1175,7 @@ bool Capture::init()
     if (FAILED(grabberPtr->SetMediaType(mediaType.data()))) {
         this->m_graph->Release();
         this->m_graph = NULL;
-
+        qDebug()<<"set media type fail";
         return false;
     }
 
@@ -1199,6 +1208,7 @@ bool Capture::init()
     AkCaps caps = this->capsFromMediaType(mediaType);
     this->m_timeBase = AkFrac(caps.property("fps").toString()).invert();
 
+    /*采集在这里开始*/
     if (FAILED(control->Run())) {
         control->Release();
         this->m_graph->Release();

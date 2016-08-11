@@ -63,7 +63,7 @@ HEADERS = \
 INCLUDEPATH += \
     ../libAvKys/Lib/src
 
-LIBS += -L../libAvKys/Lib -lavkys
+LIBS += -L$$PWD/../libAvKys/Lib -lavkys
 win32: LIBS += -lole32
 
 OTHER_FILES = \
@@ -90,8 +90,8 @@ lupdate_only {
 
 TRANSLATIONS = $$files(share/ts/*.ts)
 
+#DESTDIR = $${PWD}
 DESTDIR = $${PWD}
-
 TARGET = $${COMMONS_TARGET}
 
 !unix: RC_ICONS = share/icons/hicolor/256x256/webcamoid.ico

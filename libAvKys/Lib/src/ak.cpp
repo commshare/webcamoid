@@ -117,6 +117,7 @@ QString Ak::qmlPluginPath()
     if (akGlobalStuff->m_globalQmlPluginPath.isEmpty()) {
         QString qmlPluginPath = QString("%1/../lib/qt/qml")
                                 .arg(QCoreApplication::applicationDirPath());
+        qDebug()<<"ak qmlPluginPath["+qmlPluginPath+"]";
         qmlPluginPath = akGlobalStuff->convertToAbsolute(qmlPluginPath);
 
         return qmlPluginPath;
@@ -125,12 +126,13 @@ QString Ak::qmlPluginPath()
     if (akGlobalStuff->m_globalQmlPluginPath.isEmpty())
         return QString(QT_INSTALL_QML);
 #endif
-
+    qDebug()<<"akGlobalStuff->m_globalQmlPluginPath"<<akGlobalStuff->m_globalQmlPluginPath;
     return akGlobalStuff->m_globalQmlPluginPath;
 }
 
 void Ak::setQmlPluginPath(const QString &qmlPluginPath)
 {
+    qDebug()<<"ak setQmlPluginPath["+qmlPluginPath+"]";
     if (akGlobalStuff->m_globalQmlPluginPath == qmlPluginPath)
         return;
 

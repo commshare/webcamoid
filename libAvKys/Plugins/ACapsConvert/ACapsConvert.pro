@@ -43,7 +43,7 @@ HEADERS += \
 INCLUDEPATH += \
     ../../Lib/src
 
-LIBS += -L../../Lib/ -l$${COMMONS_TARGET}
+LIBS += -L$$PWD/../../Lib/ -l$${COMMONS_TARGET} ##add $$PWD by me
 
 OTHER_FILES += pspec.json
 

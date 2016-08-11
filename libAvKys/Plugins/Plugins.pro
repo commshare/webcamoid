@@ -22,12 +22,9 @@ CONFIG += ordered
 
 win32: SUBDIRS += VirtualCamera/src/dshow/VirtualCameraFilter
 
-SUBDIRS += \
-    ACapsConvert \
-    Aging \
-    AudioDevice \
-    Bin \
-    Blur \
+
+###
+SUBDIRS_REMOVED = \
     Cartoon \
     ChangeHSL \
     Charify \
@@ -49,8 +46,10 @@ SUBDIRS += \
     FaceDetect \
     FalseColor \
     Fire \
-    FrameOverlap \
-    GrayScale \
+    FrameOverlap
+
+
+SUBDIRS_REMOVED2 = \
     Halftone \
     Hypnotic \
     Implode \
@@ -76,7 +75,17 @@ SUBDIRS += \
     Scroll \
     Shagadelic \
     Swirl \
-    Temperature \
+    Temperature
+
+SUBDIRS += \
+    ACapsConvert \
+    Aging \
+    AudioDevice \
+    Bin \
+    Blur \
+   \
+    GrayScale \
+    \
     VideoCapture \
     Vignette \
     VirtualCamera \
