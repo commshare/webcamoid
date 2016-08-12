@@ -28,6 +28,7 @@
 #include <dbt.h>
 #include <usbiodef.h>
 
+#include"CTimer.h"
 class FrameGrabber: public QObject, public ISampleGrabberCB
 {
     Q_OBJECT
@@ -40,13 +41,14 @@ class FrameGrabber: public QObject, public ISampleGrabberCB
         STDMETHODIMP QueryInterface(REFIID riid, void **ppvObject);
         STDMETHODIMP SampleCB(double time, IMediaSample *sample);
         STDMETHODIMP BufferCB(double time, BYTE *buffer, long bufferSize);
+        QTimer *timer;
 
     signals:
         void frameReady(qreal time, const QByteArray &packet);
     private:
-        QTimer *timer;
         int first;
         int count;
+        CTimer *ctimer;
     private slots:
         void countfps();
 };

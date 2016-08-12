@@ -1113,7 +1113,6 @@ bool Capture::init()
 
         return false;
     }
-
     if (this->m_ioMethod != IoMethodDirectRead) {
          qDebug()<<"NOT IoMethodDirectRead";
         int type = this->m_ioMethod == IoMethodGrabSample? 0: 1;

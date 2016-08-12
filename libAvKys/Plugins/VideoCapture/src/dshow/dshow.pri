@@ -20,10 +20,12 @@ DEFINES += __STDC_CONSTANT_MACROS NO_DSHOW_STRSAFE
 
 HEADERS += \
     $$PWD/capture.h \
-    $$PWD/framegrabber.h
+    $$PWD/framegrabber.h \
+    $$PWD/ctimer.h
 
 SOURCES += \
     $$PWD/capture.cpp \
-    $$PWD/framegrabber.cpp
+    $$PWD/framegrabber.cpp \
+    $$PWD/ctimer.cpp
 
 LIBS += -lstrmiids -luuid -lole32 -loleaut32

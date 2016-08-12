@@ -27,6 +27,7 @@ FrameGrabber::FrameGrabber(): QObject()
      connect(timer, SIGNAL(timeout()), this, SLOT(countfps()));
      first=1;
      count=0;
+     ctimer =new CTimer();
 
 }
 
@@ -36,6 +37,8 @@ FrameGrabber::~FrameGrabber()
         qDebug()<<"stop timier";
         timer->stop();
     }
+    if(ctimer && first==0)
+        ctimer->EndTimer();
 }
 void FrameGrabber::countfps(){
     qDebug()<<"cur fps:";//<<++count;
@@ -75,9 +78,11 @@ HRESULT FrameGrabber::SampleCB(double time, IMediaSample *sample)
 {
    // qDebug()<<"got SampleCB";
     if(first)   {
-         timer->start();
+         ctimer->StartTimer(1000);
+       //  timer->start();
          first=0;
     }
+    ctimer->addcount();
     BYTE *buffer = NULL;
     LONG bufferSize = sample->GetSize();
 
