@@ -35,6 +35,9 @@ bool VideoDisplay::fillDisplay() const
     return this->m_fillDisplay;
 }
 
+/*
+实现QQuick的updatePaintNode函数就OK了，我们在updatePaintNode，描述怎么渲染。
+*/
 QSGNode *VideoDisplay::updatePaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeData *updatePaintNodeData)
 {
     Q_UNUSED(updatePaintNodeData)
@@ -49,6 +52,9 @@ QSGNode *VideoDisplay::updatePaintNode(QSGNode *oldNode, QQuickItem::UpdatePaint
     QSGSimpleTextureNode *node = NULL;
 
     if (oldNode)
+        /*动态类型转换，QSGNode转为QSGSimpleTextureNode，这个是下行转换吧
+         * 下行转换时，dynamic_cast具有类型检查的功能，比static_cast更安全。
+        */
         node = dynamic_cast<QSGSimpleTextureNode *>(oldNode);
     else
         node = new QSGSimpleTextureNode();
@@ -57,7 +63,8 @@ QSGNode *VideoDisplay::updatePaintNode(QSGNode *oldNode, QQuickItem::UpdatePaint
         node->setRect(this->boundingRect());
     else {
         QSizeF size(this->m_videoFrame.textureSize());
-        size.scale(this->boundingRect().size(), Qt::KeepAspectRatio);
+        /*在这里做缩放？*/
+        size.scale(this->boundingRect().size(), Qt::KeepAspectRatio/*在矩形中缩放时，保持分辨率*/);
         QRectF rect(QPointF(), size);
         rect.moveCenter(this->boundingRect().center());
 
@@ -72,7 +79,7 @@ QSGNode *VideoDisplay::updatePaintNode(QSGNode *oldNode, QQuickItem::UpdatePaint
 void VideoDisplay::setFrame(const AkPacket &packet)
 {
     this->m_videoFrame = packet;
-    this->update();
+    this->update();/*好像是QQuickItem定义的一个slot*/
 }
 
 void VideoDisplay::setFillDisplay(bool fillDisplay)

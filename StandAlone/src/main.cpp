@@ -224,7 +224,7 @@ int main(int argc, char *argv[])
 
     // Initialize environment.
     QQmlApplicationEngine engine;
-    MediaTools mediaTools(&engine);
+    MediaTools mediaTools(&engine);/*加载各个dll*/
 
     // @uri Webcamoid
     qmlRegisterType<VideoDisplay>("Webcamoid", 1, 0, "VideoDisplay");
@@ -254,6 +254,6 @@ int main(int argc, char *argv[])
 
         break;
     }
-
+    /*exe启动*/
     return app.exec();
 }

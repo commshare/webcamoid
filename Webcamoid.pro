@@ -52,3 +52,10 @@ unix {
     launcher.files = webcamoid.bat
     launcher.path = $${PREFIX}
 }
+
+##http://blog.csdn.net/deedzhaoyun/article/details/8974829
+CONFIG+=precompile_header
+PRECOMPILED_HEADER=stable.h
+
+## http://blog.sciencenet.cn/blog-268489-887068.html
+QMAKE_CXXFLAGS += /MP

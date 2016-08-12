@@ -25,6 +25,13 @@
 
 #include "akutils.h"
 
+/* http://blog.csdn.net/zhx6044/article/details/45031517
+看QML新的渲染机制，Qt5的QML渲染基于OpenGL，其场景的渲染在单独的线程进行，
+我们需要需要QQuickItem返回能够描述场景的对象，就是QSGNode。
+http://www.cnblogs.com/aslistener/p/4505687.html
+在QML中， 可以使用 ShaderEffect 自定义GLSL 语言， 以实现自定义特效；
+在 QtWidgets中， 可以使用 QGLWindow 结合 QOpenGLFunction 创建特效。
+*/
 class VideoFrame: public QSGTexture
 {
     Q_OBJECT

@@ -20,6 +20,8 @@
 #ifndef FRAMEGRABBER_H
 #define FRAMEGRABBER_H
 
+#include <QTimer>
+#include <QTime>
 #include <QObject>
 #include <dshow.h>
 #include <qedit.h>
@@ -41,6 +43,12 @@ class FrameGrabber: public QObject, public ISampleGrabberCB
 
     signals:
         void frameReady(qreal time, const QByteArray &packet);
+    private:
+        QTimer *timer;
+        int first;
+        int count;
+    private slots:
+        void countfps();
 };
 
 #endif // FRAMEGRABBER_H

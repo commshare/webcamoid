@@ -239,6 +239,7 @@ bool ConvertVideo::init(const AkCaps &caps)
     this->m_runPacketLoop = true;
     this->m_runDataLoop = true;
     this->m_globalClock.setClock(0.);
+    /*这里有俩线程*/
     this->m_packetLoopResult = QtConcurrent::run(&this->m_threadPool, this->packetLoop, this);
     this->m_dataLoopResult = QtConcurrent::run(&this->m_threadPool, this->dataLoop, this);
 
@@ -342,6 +343,7 @@ void ConvertVideo::processData(const FramePtr &frame)
         qreal diff = pts - this->m_globalClock.clock();
         qreal delay = pts - this->m_lastPts;
 
+        /*同步在这这里，可能要重复或者跳过帧*/
         // skip or repeat frame. We take into account the
         // delay to compute the threshold. I still don't know
         // if it is the best guess
@@ -376,13 +378,39 @@ void ConvertVideo::processData(const FramePtr &frame)
 
 void ConvertVideo::convert(const FramePtr &frame)
 {
-    AVPixelFormat outPixFormat = AV_PIX_FMT_RGB24;
+    AVPixelFormat outPixFormat = AV_PIX_FMT_RGB24; /*为啥一定要输出这个格式*/
 
+    /*
+     * [swscaler @ 3b845180] deprecated pixel format used, make sure you did set range correctly
+     * http://stackoverflow.com/questions/23067722/swscaler-warning-deprecated-pixel-format-used
+    */
+    AVPixelFormat pixFormat;
+    switch (frame->format) {
+    case AV_PIX_FMT_YUVJ420P :
+        qDebug()<<"AV_PIX_FMT_YUVJ420P";
+        pixFormat = AV_PIX_FMT_YUV420P;
+        break;
+    case AV_PIX_FMT_YUVJ422P  :  /*经过打印果然是这个，对应MJPEG*/
+        pixFormat = AV_PIX_FMT_YUV422P;
+      //  qDebug()<<"AV_PIX_FMT_YUV422P";
+        break;
+    case AV_PIX_FMT_YUVJ444P   :
+        pixFormat = AV_PIX_FMT_YUV444P;
+        qDebug()<<"AV_PIX_FMT_YUV444P";
+        break;
+    case AV_PIX_FMT_YUVJ440P :
+        pixFormat = AV_PIX_FMT_YUV440P;
+        qDebug()<<"AV_PIX_FMT_YUV440P";
+    default:
+        qDebug()<<"NOT CHANGE, USE frame->format:"<<frame->format;
+        pixFormat =AVPixelFormat(frame->format);
+        break;
+    }
     // Initialize rescaling context.
     this->m_scaleContext = sws_getCachedContext(this->m_scaleContext,
                                                   frame->width,
                                                   frame->height,
-                                                  AVPixelFormat(frame->format),
+                                                 /* AVPixelFormat(frame->format)*/pixFormat,
                                                   frame->width,
                                                   frame->height,
                                                   outPixFormat,

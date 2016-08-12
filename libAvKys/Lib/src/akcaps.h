@@ -81,6 +81,7 @@ class AkCaps: public QObject
         virtual void resetMimeType();
         void clear();
 
+        /*设置为友元*/
     friend QDebug operator <<(QDebug debug, const AkCaps &caps);
     friend QDataStream &operator >>(QDataStream &istream, AkCaps &caps);
     friend QDataStream &operator <<(QDataStream &ostream, const AkCaps &caps);

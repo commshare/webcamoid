@@ -238,6 +238,7 @@ QString MediaTools::curRecordingFormat() const
                 QString();
 }
 
+/*录制*/
 bool MediaTools::recording() const
 {
     return this->m_recording;

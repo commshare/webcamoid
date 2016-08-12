@@ -34,7 +34,7 @@ class VideoFormat
                 {AkVideoCaps::Format_yuv420p,        12, AkFourCC('I', '4', '2', '0')},
                 {AkVideoCaps::Format_yuyv422,        16, AkFourCC('Y', 'U', 'Y', '2')},
                 {AkVideoCaps::Format_rgb24,          24, AkFourCC('R', 'G', 'B', '3')},
-                {AkVideoCaps::Format_bgr24,          24, AkFourCC('B', 'G', 'R', '3')},
+                {AkVideoCaps::Format_bgr24,          24, AkFourCC('B', 'G', 'R', '3')}, /*这是BRG24*/
                 {AkVideoCaps::Format_yuv422p,        16, AkFourCC('Y', '4', '2', 'B')},
                 {AkVideoCaps::Format_yuv444p,        24, AkFourCC('4', '4', '4', 'P')},
                 {AkVideoCaps::Format_yuv410p,        9,  AkFourCC('Y', 'U', 'V', '9')},
@@ -44,7 +44,7 @@ class VideoFormat
                 {AkVideoCaps::Format_monob,          1,  AkFourCC('B', '0', 'W', '1')},
                 {AkVideoCaps::Format_pal8,           8,  AkFourCC('P', 'A', 'L', '\x8')},
                 {AkVideoCaps::Format_yuvj420p,       12, AK_FOURCC_NULL},
-                {AkVideoCaps::Format_yuvj422p,       16, AK_FOURCC_NULL},
+                {AkVideoCaps::Format_yuvj422p,       16, AK_FOURCC_NULL}, /*这个是mjpeg？*/
                 {AkVideoCaps::Format_yuvj444p,       24, AK_FOURCC_NULL},
                 {AkVideoCaps::Format_uyvy422,        16, AkFourCC('U', 'Y', 'V', 'Y')},
                 {AkVideoCaps::Format_uyyvyy411,      12, AK_FOURCC_NULL},

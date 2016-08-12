@@ -58,7 +58,8 @@ CONFIG += qt
 HEADERS = \
     src/mediatools.h \
     src/videodisplay.h \
-    src/videoframe.h
+    src/videoframe.h \
+    src/stable.h
 
 INCLUDEPATH += \
     ../libAvKys/Lib/src

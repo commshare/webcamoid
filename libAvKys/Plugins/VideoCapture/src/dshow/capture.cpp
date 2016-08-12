@@ -140,6 +140,7 @@ typedef QMap<Capture::IoMethod, QString> IoMethodMap;
 inline IoMethodMap initIoMethodMap()
 {
     IoMethodMap ioMethodToStr;
+    /*直接读取、获取sample，获取buffer，当前应该默认使用grabSample*/
     ioMethodToStr[Capture::IoMethodDirectRead] = "directRead";
     ioMethodToStr[Capture::IoMethodGrabSample] = "grabSample";
     ioMethodToStr[Capture::IoMethodGrabBuffer] = "grabBuffer";
@@ -152,7 +153,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(IoMethodMap, ioMethodToStr, (initIoMethodMap()))
 Capture::Capture(): QObject()
 {
     this->m_id = -1;
-    this->m_ioMethod = IoMethodGrabSample;
+    this->m_ioMethod = IoMethodGrabSample;/*default*/
     this->m_graph = NULL;
 
     /*使用这个*/
@@ -251,12 +252,15 @@ QString Capture::description(const QString &webcam) const
     return description;
 }
 
+/*传入一个camera，这是选中一个camera得到的结果*/
 QVariantList Capture::caps(const QString &webcam) const
 {
     QVariantList caps;
+    /*获取当前camera的媒体类型列表*/
     MediaTypesList mediaTypes = this->listMediaTypes(webcam);
 
     foreach (MediaTypePtr mediaType, mediaTypes) {
+        /*每次调用这个，对每一种采样格式，拿到能力*/
         AkCaps videoCaps = this->capsFromMediaType(mediaType);
 
         if (!videoCaps)
@@ -411,13 +415,15 @@ AkPacket Capture::readFrame()
 
     AM_MEDIA_TYPE mediaType;
     ZeroMemory(&mediaType, sizeof(AM_MEDIA_TYPE));
+    /*填充mediaType*/
     this->m_grabber->GetConnectedMediaType(&mediaType);
+    /*这是根据一个mediaType得到一个能力*/
     AkCaps caps = this->capsFromMediaType(&mediaType);
 
     AkPacket packet;
 
     timeval timestamp;
-    gettimeofday(&timestamp, NULL);
+    gettimeofday(&timestamp, NULL); /*当前时间做时间戳*/
 
     qint64 pts = qint64((timestamp.tv_sec
                          + 1e-6 * timestamp.tv_usec)
@@ -426,8 +432,10 @@ AkPacket Capture::readFrame()
     if (this->m_ioMethod != IoMethodDirectRead) {
         this->m_mutex.lock();
 
-        if (this->m_curBuffer.isEmpty())
+        if (this->m_curBuffer.isEmpty())/*缓冲空了，要等待数据来*/{
+            //qDebug()<<"buffer is empty ,wait here within 1s";
             this->m_waitCondition.wait(&this->m_mutex, 1000);
+        }
 
         if (!this->m_curBuffer.isEmpty()) {
             int bufferSize = this->m_curBuffer.size();
@@ -443,7 +451,8 @@ AkPacket Capture::readFrame()
         }
 
         this->m_mutex.unlock();
-    } else {
+    } else {/*直接读取*/
+        qDebug()<<"read frame by IoMethodDirectRead ,should not be here ";
         long bufferSize;
 
         HRESULT hr = this->m_grabber->GetCurrentBuffer(&bufferSize, NULL);
@@ -476,7 +485,7 @@ AkCaps Capture::capsFromMediaType(const AM_MEDIA_TYPE *mediaType) const
     VIDEOINFOHEADER *videoInfoHeader =
             reinterpret_cast<VIDEOINFOHEADER *>(mediaType->pbFormat);
     QString fourcc = guidToStr->value(mediaType->subtype);
-    qDebug()<<"fourcc ["+fourcc+"]";
+  //  qDebug()<<"fourcc ["+fourcc+"]";
     if (fourcc.isEmpty()){
         qDebug()<<"fourcc is empty";
         return AkCaps();
@@ -488,9 +497,10 @@ AkCaps Capture::capsFromMediaType(const AM_MEDIA_TYPE *mediaType) const
     videoCaps.setProperty("width", int(videoInfoHeader->bmiHeader.biWidth));
     videoCaps.setProperty("height", int(videoInfoHeader->bmiHeader.biHeight));
     AkFrac fps(TIME_BASE, videoInfoHeader->AvgTimePerFrame);
-    qDebug()<<"width["<<videoInfoHeader->bmiHeader.biWidth <<"and height "<<videoInfoHeader->bmiHeader.biHeight;
-    /*设置帧率*/
-    qDebug()<<"## set fps ["+fps.toString()+"]";
+    /*这应该是从设备读取出来的*/
+    //qDebug()<<"width["<<videoInfoHeader->bmiHeader.biWidth <<"and height "<<videoInfoHeader->bmiHeader.biHeight;
+    /*设置帧率,帧率一直都被设置为10000 000 / 333333*/
+   // qDebug()<<"## set fps ["+fps.toString()+"]";
     videoCaps.setProperty("fps", fps.toString());
 
     return videoCaps;
@@ -1112,6 +1122,7 @@ bool Capture::init()
     }else
         qDebug()<<"IS IoMethodDirectRead";
 
+    /*创建SampleGrabberPtr对象*/
     this->m_grabber = SampleGrabberPtr(grabberPtr, this->deleteUnknown);
 
     if (!this->connectFilters(this->m_graph, webcamFilter, grabberFilter)) {

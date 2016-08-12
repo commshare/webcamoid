@@ -16,16 +16,29 @@
  *
  * Web-Site: http://webcamoid.github.io/
  */
+#include <QDebug> /*for qDebug()*/
 
 #include "framegrabber.h"
 
 FrameGrabber::FrameGrabber(): QObject()
 {
+     timer = new QTimer(this);
+     timer->setInterval(1000);   //定时时间间隔为1000ms
+     connect(timer, SIGNAL(timeout()), this, SLOT(countfps()));
+     first=1;
+     count=0;
 
 }
 
 FrameGrabber::~FrameGrabber()
 {
+    if(timer->isActive() ){
+        qDebug()<<"stop timier";
+        timer->stop();
+    }
+}
+void FrameGrabber::countfps(){
+    qDebug()<<"cur fps:";//<<++count;
 }
 
 ULONG FrameGrabber::AddRef()
@@ -60,6 +73,11 @@ HRESULT FrameGrabber::QueryInterface(const IID &riid, void **ppvObject)
 
 HRESULT FrameGrabber::SampleCB(double time, IMediaSample *sample)
 {
+   // qDebug()<<"got SampleCB";
+    if(first)   {
+         timer->start();
+         first=0;
+    }
     BYTE *buffer = NULL;
     LONG bufferSize = sample->GetSize();
 

@@ -82,7 +82,7 @@ class Capture: public QObject
             IoMethodGrabBuffer
         };
 
-        explicit Capture();
+        explicit Capture(); /*explicit是*/
 
         Q_INVOKABLE QStringList webcams() const;
         Q_INVOKABLE QString device() const;
@@ -112,7 +112,7 @@ class Capture: public QObject
         IGraphBuilder *m_graph;
         SampleGrabberPtr m_grabber;
         FrameGrabber m_frameGrabber;
-        QByteArray m_curBuffer;
+        QByteArray m_curBuffer; /*缓冲*/
         QMutex m_mutex;
         QMutex m_controlsMutex;
         QWaitCondition m_waitCondition;

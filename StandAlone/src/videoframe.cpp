@@ -21,6 +21,7 @@
 
 VideoFrame::VideoFrame(const AkPacket &packet)
 {
+    /*Format_ARGB32*/
     this->m_image = AkUtils::packetToImage(packet)
                         .convertToFormat(QImage::Format_ARGB32)
                         .mirrored();

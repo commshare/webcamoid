@@ -18,6 +18,7 @@
  */
 
 #include <akutils.h>
+#include<QFile>
 
 #include "videocaptureelement.h"
 
@@ -187,7 +188,22 @@ AkCaps VideoCaptureElement::rawCaps(int stream) const
 
     return streams.value(stream).value<AkCaps>();
 }
-
+/*
+http://blog.csdn.net/dreamtdp/article/details/8760544
+*/
+void write2file(QStringList lines){
+    QFile file("J:\\MYSELF\\webcamoid\\StandAlone\\CapsDescriptions.txt");
+    if (file.open(QIODevice::WriteOnly|QIODevice::Append|QIODevice::Text))
+    {
+          QTextStream stream(&file);
+          for(QStringList :: Iterator it = lines.begin(); it != lines.end();++it)
+          stream << *it << "\n";
+          file.close();
+    }else
+        qDebug()<<"open file failure";
+    qDebug()<<"write to file ok";
+}
+/*列举能力描述*/
 QStringList VideoCaptureElement::listCapsDescription() const
 {
     QStringList capsDescriptions;
@@ -195,7 +211,7 @@ QStringList VideoCaptureElement::listCapsDescription() const
 
     foreach (QVariant caps, streams)
         capsDescriptions << this->m_capture.capsDescription(caps.value<AkCaps>());
-
+    write2file(capsDescriptions);
     return capsDescriptions;
 }
 
@@ -238,7 +254,7 @@ bool VideoCaptureElement::resetCameraControls()
 {
     return this->m_capture.resetCameraControls();
 }
-
+/*循环在这里*/
 void VideoCaptureElement::cameraLoop(VideoCaptureElement *captureElement)
 {
 #ifdef Q_OS_WIN32
@@ -247,18 +263,20 @@ void VideoCaptureElement::cameraLoop(VideoCaptureElement *captureElement)
 #endif
 
     if (captureElement->m_capture.init()) {
+        /*while循环*/
         while (captureElement->m_runCameraLoop) {
+            /*PAUSE就休眠线程*/
             if (captureElement->m_pause) {
                 QThread::msleep(PAUSE_TIMEOUT);
 
                 continue;
             }
-
+            /*否则读取一帧*/
             AkPacket packet = captureElement->m_capture.readFrame();
 
             if (!packet)
                 continue;
-
+            /*加入队列缓冲*/
             captureElement->m_convertVideo.packetEnqueue(packet);
         }
 
@@ -294,6 +312,7 @@ void VideoCaptureElement::setIoMethod(const QString &ioMethod)
 
 void VideoCaptureElement::setNBuffers(int nBuffers)
 {
+    qDebug()<<"nBuffers["<<nBuffers<<"]";
     this->m_capture.setNBuffers(nBuffers);
 }
 
@@ -358,6 +377,7 @@ bool VideoCaptureElement::setState(AkElement::ElementState state)
             if (streams.isEmpty())
                 return false;
 
+            /*某个设备所支持能力的列表？*/
             QVariantList supportedCaps = this->m_capture.caps(this->m_capture.device());
             AkCaps caps = supportedCaps.value(streams[0]).value<AkCaps>();
 
@@ -365,6 +385,7 @@ bool VideoCaptureElement::setState(AkElement::ElementState state)
             QString fourcc = caps.property("fourcc").toString();
             this->m_mirror = mirrorFormats->contains(fourcc);
             this->m_swapRgb = swapRgbFormats->contains(fourcc);
+            qDebug()<<"fourcc["<<fourcc<<"] m_mirror ["<<this->m_mirror<<"] m_swapRgb["<<this->m_swapRgb<<"]";
 #endif
 
             if (!this->m_convertVideo.init(caps))
@@ -372,6 +393,7 @@ bool VideoCaptureElement::setState(AkElement::ElementState state)
 
             this->m_pause = false;
             this->m_runCameraLoop = true;
+            /*这个是启动一个线程？*/
             this->m_cameraLoopResult = QtConcurrent::run(&this->m_threadPool, this->cameraLoop, this);
 
             return AkElement::setState(state);
@@ -405,7 +427,7 @@ bool VideoCaptureElement::setState(AkElement::ElementState state)
         switch (state) {
         case AkElement::ElementStateNull:
             this->m_runCameraLoop = false;
-            this->m_cameraLoopResult.waitForFinished();
+            this->m_cameraLoopResult.waitForFinished();/*等待线程结束？*/
             this->m_convertVideo.uninit();
 
             return AkElement::setState(state);
@@ -428,6 +450,7 @@ void VideoCaptureElement::frameReady(const AkPacket &packet)
 {
 #if defined(Q_OS_WIN32)
     if (this->m_mirror || this->m_swapRgb) {
+        /*最后还是要用QImage来显示*/
         QImage oImage = AkUtils::packetToImage(packet);
 
         if (this->m_mirror)

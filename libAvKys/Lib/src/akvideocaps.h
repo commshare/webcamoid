@@ -79,7 +79,7 @@ class AkVideoCaps: public QObject
             Format_none = -1,
             Format_yuv420p,
             Format_yuyv422,
-            Format_rgb24,
+            Format_rgb24,/*默认用这个获取？*/
             Format_bgr24,
             Format_yuv422p,
             Format_yuv444p,
